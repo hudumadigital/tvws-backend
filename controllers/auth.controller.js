@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 
 exports.postRegister = async (req, res, next) => {
   const { firstname, lastname, username, password, mobile, email } = req.body;
+  // return console.log(req.body)
+  email.toString().toLowerCase();
   try {
     const user = await User.findOne({ email: email });
     if (user) {
@@ -12,6 +14,7 @@ exports.postRegister = async (req, res, next) => {
       throw error;
     }
     const hashedPassword = await bcrypt.hash(password, 12);
+
     const newUser = new User({
       username: username,
       mobile: +mobile,
@@ -31,4 +34,6 @@ exports.postRegister = async (req, res, next) => {
     next(error);
   }
 };
-exports.postLogin = (req, res, next) => {};
+exports.postLogin = async (req, res, next) => {
+  
+};
