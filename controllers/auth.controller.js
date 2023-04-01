@@ -35,5 +35,55 @@ exports.postRegister = async (req, res, next) => {
   }
 };
 exports.postLogin = async (req, res, next) => {
-  
+  const { password, email } = req.body;
+  try {
+    email.toString().toLowerCase();
+    const foundUser = await User.findOne({ email: email });
+    if (!foundUser) {
+      const error = new Error(
+        "User with email " + email + " does not exist, Consider register"
+      );
+      error.statusCode = 401;
+      throw error;
+    }
+    validateHelper(password, foundUser.password, (doMatch) => {
+      if (!doMatch) {
+        return res.status(200).json({
+          message: "Either email or password is incorrect",
+          isLoggedIn: false,
+        });
+      }
+      if (doMatch) {
+        const token = jwt.sign(
+          {
+            email: foundUser.email,
+            userID: foundUser._id,
+          },
+          "secureSecurityLine",
+          { expiresIn: "1hr" }
+        );
+        res.status(201).json({
+          success: true,
+          token: token,
+          email: foundUser.email,
+          userID: foundUser._id,
+          isLoggedIn: true,
+          expiresIn: 3600,
+          username: foundUser.username,
+        });
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const validateHelper = async (password, hashedPassword, callback) => {
+  try {
+    const doMatch = await bcrypt.compare(password, hashedPassword);
+
+    if (doMatch) return callback(doMatch);
+    return callback(doMatch);
+  } catch (error) {
+    return callback(false);
+  }
 };
