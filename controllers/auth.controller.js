@@ -47,7 +47,7 @@ exports.postLogin = async (req, res, next) => {
       throw error;
     }
     validateHelper(password, foundUser.password, (doMatch) => {
-      if (error) {
+      if (!doMatch) {
         return res
           .status(401)
           .json({ message: "Email or password is incoreect" });
@@ -80,9 +80,11 @@ const validateHelper = async (password, hashedPassword, callback) => {
   try {
     const doMatch = await bcrypt.compare(password, hashedPassword);
 
-    if (doMatch) return callback(doMatch);
-    return callback(new Error("Email or password is incorrect"));
+    if (doMatch) {
+      return callback(doMatch);
+    }
+    return callback(false);
   } catch (error) {
-    return callback(error);
+    return callback(false);
   }
 };
