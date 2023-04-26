@@ -3,10 +3,21 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 exports.postRegister = async (req, res, next) => {
-  const { firstname, lastname, username, password, mobile, email } = req.body;
+  const { firstname, lastname, username, password, mobile, email, admin } =
+    req.body;
   // return console.log(req.body)
-  email.toString().toLowerCase();
   try {
+    if (
+      firstname == null ||
+      lastname == null ||
+      username == null ||
+      password == null ||
+      mobile == null ||
+      email == null
+    ) {
+      throw new Error("Provide all necessary credentials");
+    }
+    email.toString().toLowerCase();
     const user = await User.findOne({ email: email });
     if (user) {
       const error = new Error("User already exists, user other email");
@@ -22,6 +33,7 @@ exports.postRegister = async (req, res, next) => {
       lastname: lastname,
       password: hashedPassword,
       email: email,
+      admin: admin,
     });
     const savedUser = await newUser.save();
     if (!savedUser) {
@@ -86,5 +98,51 @@ const validateHelper = async (password, hashedPassword, callback) => {
     return callback(false);
   } catch (error) {
     return callback(false);
+  }
+};
+exports.deleteUser = async (req, res, next) => {
+  const { email } = req.params;
+  try {
+    const foundUser = await User.findOne({ email: email });
+    if (!foundUser) throw new Error("User not found, check the email");
+    const deletedUser = await foundUser.deleteOne();
+    // const deletedUser = await User.findOneAndDelete({ email: email });
+    if (deletedUser) {
+      res.status(200).json({
+        message: `${foundUser.username} deleted successfully`,
+        success: true,
+      });
+    }
+    // throw new Error(
+    //   "User could not be deleted or found, Please check the email"
+    // );
+  } catch (error) {
+    next(error);
+  }
+};
+exports.getUsers = async (req, res, next) => {
+  try {
+    const foundUsers = await User.find({ admin: { $ne: true } })
+      .sort({ _id: -1 })
+      .limit(20);
+    if (foundUsers) {
+      return res
+        .status(201)
+        .json({ message: "Users found", users: foundUsers });
+    }
+    throw new Error("Something went wrong");
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getOneUser = async (req, res, next) => {
+  const { email } = req.params;
+  try {
+    const foundUser = await User.findOne({ email: email });
+    if (!foundUser) throw new Error("Something went wrong or user not found");
+    res.status(201).json({ message: "User found", user: foundUser });
+  } catch (error) {
+    next(error);
   }
 };

@@ -5,16 +5,16 @@ const Schema = mongoose.Schema;
 const userModel = new Schema(
   {
     firstname: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     lastname: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
-    email : {
-        type: String,
-        required: true
+    email: {
+      type: String,
+      required: true,
     },
     username: {
       type: String,
@@ -27,6 +27,10 @@ const userModel = new Schema(
     mobile: {
       type: Number,
       required: true,
+    },
+    admin: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
