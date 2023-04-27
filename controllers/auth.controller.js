@@ -81,6 +81,7 @@ exports.postLogin = async (req, res, next) => {
           isLoggedIn: true,
           expiresIn: 3600,
           username: foundUser.username,
+          admin: foundUser.admin
         });
       }
     });
