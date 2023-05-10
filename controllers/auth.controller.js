@@ -122,8 +122,9 @@ exports.deleteUser = async (req, res, next) => {
   }
 };
 exports.getUsers = async (req, res, next) => {
+  // { admin: { $ne: true } }
   try {
-    const foundUsers = await User.find({ admin: { $ne: true } })
+    const foundUsers = await User.find()
       .sort({ _id: -1 })
       .limit(20);
     if (foundUsers) {
