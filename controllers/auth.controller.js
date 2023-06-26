@@ -69,6 +69,8 @@ exports.postLogin = async (req, res, next) => {
           {
             email: foundUser.email,
             userID: foundUser._id,
+            // username: foundUser.username,
+            // mobile: foundUser.mobile,
           },
           "secureSecurityLine",
           { expiresIn: "1hr" }
@@ -81,7 +83,8 @@ exports.postLogin = async (req, res, next) => {
           isLoggedIn: true,
           expiresIn: 3600,
           username: foundUser.username,
-          admin: foundUser.admin
+          admin: foundUser.admin,
+          moible: foundUser.mobile,
         });
       }
     });
@@ -124,9 +127,7 @@ exports.deleteUser = async (req, res, next) => {
 exports.getUsers = async (req, res, next) => {
   // { admin: { $ne: true } }
   try {
-    const foundUsers = await User.find()
-      .sort({ _id: -1 })
-      .limit(20);
+    const foundUsers = await User.find().sort({ _id: -1 }).limit(20);
     if (foundUsers) {
       return res
         .status(201)
