@@ -17,7 +17,8 @@ const eventModel = new Schema(
       required: false,
     },
     image: {
-      imagePaths: [],
+      type: String,
+      required: true,
     },
     time: {
       type: String,

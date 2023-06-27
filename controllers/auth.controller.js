@@ -36,7 +36,7 @@ exports.postRegister = async (req, res, next) => {
       admin: admin,
     });
     const savedUser = await newUser.save();
-    if (!savedUser) {
+    if (!savedUser || savedUser == null) {
       const error = new Error("ERROR OCCURED | COULD NOT BE REGISTERED");
       error.statusCode = 500;
       throw error;

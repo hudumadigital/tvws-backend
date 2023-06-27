@@ -2,7 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const compression = require("compression");
 const multer = require("multer");
-const path = require("path")
+const path = require("path");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 require("dotenv").config();
@@ -42,6 +43,8 @@ const diskStorage = multer.diskStorage({
 //MIDDLEWARES
 app.use(compression());
 app.use(express.json());
+// app.use(cookieParser());
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use((req, res, next) => {
@@ -49,7 +52,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Methods", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Content-Type, X-Requested-With, Authorization"
+    "Content-Type, X-Requested-With, Authorization, Enctype,"
   );
   // res.setHeader('Access-Control-Allow-Credentials', true)
   next();
